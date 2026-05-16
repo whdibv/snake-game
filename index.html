@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>&#36138;&#21507;&#34503;</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="game-panel" aria-label="&#36138;&#21507;&#34503;&#28216;&#25103;">
+        <header class="top-bar">
+          <div>
+            <p class="eyebrow">Snake Arcade</p>
+            <h1>&#36138;&#21507;&#34503;</h1>
+          </div>
+          <div class="stats" aria-label="&#28216;&#25103;&#25968;&#25454;">
+            <div class="stat">
+              <span>&#20998;&#25968;</span>
+              <strong id="score">0</strong>
+            </div>
+            <div class="stat">
+              <span>&#26368;&#20339;</span>
+              <strong id="bestScore">0</strong>
+            </div>
+          </div>
+        </header>
+
+        <div class="board-wrap">
+          <canvas id="gameCanvas" width="600" height="600" aria-label="&#28216;&#25103;&#26827;&#30424;"></canvas>
+          <div class="overlay" id="overlay">
+            <p id="overlayTitle">&#20934;&#22791;&#24320;&#22987;</p>
+            <span id="overlayHint">&#25353;&#31354;&#26684;&#25110;&#28857;&#20987;&#24320;&#22987;</span>
+          </div>
+        </div>
+
+        <footer class="controls">
+          <div class="actions" aria-label="&#28216;&#25103;&#25805;&#20316;">
+            <button class="icon-button primary" id="startButton" type="button" title="&#24320;&#22987;&#25110;&#26242;&#20572;" aria-label="&#24320;&#22987;&#25110;&#26242;&#20572;">
+              <span aria-hidden="true">&gt;</span>
+            </button>
+            <button class="icon-button" id="restartButton" type="button" title="&#37325;&#26032;&#24320;&#22987;" aria-label="&#37325;&#26032;&#24320;&#22987;">
+              <span aria-hidden="true">&#8635;</span>
+            </button>
+          </div>
+
+          <div class="speed-control" aria-label="&#36895;&#24230;&#35774;&#32622;">
+            <span>&#36895;&#24230;</span>
+            <input id="speedSlider" type="range" min="1" max="5" value="2" aria-label="&#36895;&#24230;" />
+            <strong id="speedLabel">2</strong>
+          </div>
+        </footer>
+      </section>
+
+      <section class="side-panel" aria-label="&#25511;&#21046;&#21488;">
+        <div class="status-strip">
+          <span id="gameStatus">&#24453;&#26426;</span>
+          <span id="foodCount">&#39135;&#29289; 0</span>
+        </div>
+
+        <div class="pad" aria-label="&#31227;&#21160;&#25511;&#21046;">
+          <button class="pad-button up" data-direction="up" type="button" aria-label="&#21521;&#19978;">&#9650;</button>
+          <button class="pad-button left" data-direction="left" type="button" aria-label="&#21521;&#24038;">&#9664;</button>
+          <button class="pad-button right" data-direction="right" type="button" aria-label="&#21521;&#21491;">&#9654;</button>
+          <button class="pad-button down" data-direction="down" type="button" aria-label="&#21521;&#19979;">&#9660;</button>
+        </div>
+
+        <dl class="legend">
+          <div>
+            <dt>&#31227;&#21160;</dt>
+            <dd>&#26041;&#21521;&#38190; / WASD</dd>
+          </div>
+          <div>
+            <dt>&#26242;&#20572;</dt>
+            <dd>&#31354;&#26684;</dd>
+          </div>
+          <div>
+            <dt>&#30446;&#26631;</dt>
+            <dd>&#21507;&#25481;&#21457;&#20809;&#39135;&#29289;&#65292;&#36991;&#24320;&#22681;&#22721;&#21644;&#33258;&#24049;</dd>
+          </div>
+        </dl>
+      </section>
+    </main>
+
+    <script src="game.js"></script>
+  </body>
+</html>
