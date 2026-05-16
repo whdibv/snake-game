@@ -1,0 +1,46 @@
+{
+  "name": "snake-game",
+  "version": "1.0.0",
+  "description": "A pure frontend snake game packaged for web, Windows, and Android.",
+  "main": "electron/main.js",
+  "private": true,
+  "scripts": {
+    "prepare:web": "node scripts/prepare-web.js",
+    "desktop:build": "electron-builder --win portable --x64",
+    "android:add": "npm run prepare:web && cap add android",
+    "android:sync": "npm run prepare:web && cap sync android"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^7.0.1",
+    "@capacitor/cli": "^7.0.1",
+    "electron": "^35.0.0",
+    "electron-builder": "^25.1.8"
+  },
+  "dependencies": {
+    "@capacitor/core": "^7.0.1"
+  },
+  "build": {
+    "appId": "com.whdibv.snakegame",
+    "productName": "Snake Game",
+    "directories": {
+      "output": "dist/windows"
+    },
+    "files": [
+      "index.html",
+      "styles.css",
+      "game.js",
+      "electron/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "snake-game-v${version}-windows-${arch}.${ext}"
+    }
+  }
+}
