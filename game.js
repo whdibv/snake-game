@@ -8,10 +8,37 @@ const overlayTitle = document.querySelector("#overlayTitle");
 const overlayHint = document.querySelector("#overlayHint");
 const startButton = document.querySelector("#startButton");
 const restartButton = document.querySelector("#restartButton");
+const touchLayer = document.querySelector("#touchLayer");
+const touchHint = document.querySelector("#touchHint");
+
+const isTouchDevice =
+  window.matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0;
+
+// 提示文案按设备自适应（触屏设备没有空格键）
+const hintText = {
+  ready: isTouchDevice
+    ? "\u70b9\u51fb\u68cb\u76d8\u4efb\u610f\u4f4d\u7f6e\u5f00\u59cb"
+    : "\u6309\u7a7a\u683c\u6216\u70b9\u51fb\u68cb\u76d8\u5f00\u59cb",
+  paused: isTouchDevice
+    ? "\u70b9\u51fb\u68cb\u76d8\u7ee7\u7eed"
+    : "\u6309\u7a7a\u683c\u7ee7\u7eed",
+  over: isTouchDevice
+    ? "\u70b9\u51fb\u68cb\u76d8\u91cd\u5f00"
+    : "\u70b9\u51fb\u91cd\u5f00\u6216\u6309\u7a7a\u683c",
+};
+
+function setTouchHintVisible(visible) {
+  touchHint.classList.toggle("hidden", !visible);
+}
+
+if (isTouchDevice) {
+  touchHint.textContent = "\u70b9\u68cb\u76d8\u56db\u8fb9\u8f6c\u5411\u00b7\u6ed1\u52a8\u4e5f\u884c";
+}
 const speedSlider = document.querySelector("#speedSlider");
 const speedLabel = document.querySelector("#speedLabel");
 const statusEl = document.querySelector("#gameStatus");
 const foodCountEl = document.querySelector("#foodCount");
+const fpsEl = document.querySelector("#fpsCount");
 const padButtons = document.querySelectorAll("[data-direction]");
 
 const gridSize = 24;
@@ -58,7 +85,8 @@ function resetGame() {
   updateSpeed();
   placeFood();
   updateHud();
-  setOverlay("\u51c6\u5907\u5f00\u59cb", "\u6309\u7a7a\u683c\u6216\u70b9\u51fb\u5f00\u59cb", true);
+  setOverlay("\u51c6\u5907\u5f00\u59cb", hintText.ready, true);
+  setTouchHintVisible(true);
   startButton.querySelector("span").textContent = ">";
   draw();
 }
@@ -96,6 +124,7 @@ function startGame() {
 
   isRunning = true;
   setOverlay("", "", false);
+  setTouchHintVisible(false);
   startButton.querySelector("span").textContent = "II";
   updateHud();
   cancelAnimationFrame(animationId);
@@ -104,7 +133,8 @@ function startGame() {
 
 function pauseGame() {
   isRunning = false;
-  setOverlay("\u5df2\u6682\u505c", "\u6309\u7a7a\u683c\u7ee7\u7eed", true);
+  setOverlay("\u5df2\u6682\u505c", hintText.paused, true);
+  setTouchHintVisible(true);
   startButton.querySelector("span").textContent = ">";
   updateHud();
 }
@@ -164,7 +194,8 @@ function step() {
 function endGame() {
   isRunning = false;
   isGameOver = true;
-  setOverlay("\u6e38\u620f\u7ed3\u675f", "\u70b9\u51fb\u91cd\u5f00\u6216\u6309\u7a7a\u683c", true);
+  setOverlay("\u6e38\u620f\u7ed3\u675f", hintText.over, true);
+  setTouchHintVisible(true);
   startButton.querySelector("span").textContent = ">";
   updateHud();
 }
@@ -353,5 +384,95 @@ padButtons.forEach((button) => {
   });
 });
 
+// ── 移动端：点按棋盘四边 / 滑动屏幕转向 ──────────────────────────
+let touchStartX = 0;
+let touchStartY = 0;
+let touchActive = false;
+let feedbackTimer;
+const SWIPE_THRESHOLD = 24;
+
+function directionFromPoint(x, y, width, height) {
+  const dx = x - width / 2;
+  const dy = y - height / 2;
+  return Math.abs(dx) > Math.abs(dy)
+    ? dx > 0
+      ? "right"
+      : "left"
+    : dy > 0
+      ? "down"
+      : "up";
+}
+
+function showTouchFeedback(dir) {
+  touchLayer.dataset.dir = dir;
+  clearTimeout(feedbackTimer);
+  feedbackTimer = setTimeout(() => {
+    delete touchLayer.dataset.dir;
+  }, 150);
+}
+
+function applyTouchDirection(dir) {
+  setDirection(dir);
+  showTouchFeedback(dir);
+  if (isGameOver) {
+    resetGame();
+    startGame();
+  } else if (!isRunning) {
+    startGame();
+  }
+}
+
+touchLayer.addEventListener("pointerdown", (event) => {
+  if (event.pointerType === "mouse" && event.button !== 0) {
+    return;
+  }
+  const rect = canvas.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+  applyTouchDirection(directionFromPoint(x, y, rect.width, rect.height));
+  touchActive = true;
+  touchStartX = x;
+  touchStartY = y;
+});
+
+touchLayer.addEventListener("pointermove", (event) => {
+  if (!touchActive) {
+    return;
+  }
+  const rect = canvas.getBoundingClientRect();
+  const dx = event.clientX - rect.left - touchStartX;
+  const dy = event.clientY - rect.top - touchStartY;
+  if (Math.hypot(dx, dy) < SWIPE_THRESHOLD) {
+    return;
+  }
+  applyTouchDirection(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : (dy > 0 ? "down" : "up"));
+  touchActive = false;
+});
+
+["pointerup", "pointercancel", "pointerleave"].forEach((type) => {
+  touchLayer.addEventListener(type, () => {
+    touchActive = false;
+  });
+});
+
 bestScore = readBestScore();
 resetGame();
+
+// ── 帧率显示：独立循环，暂停时也统计页面真实帧率 ────────────────
+let fpsFrameCount = 0;
+let fpsLastUpdate = performance.now();
+
+function fpsLoop(now) {
+  fpsFrameCount += 1;
+  const elapsed = now - fpsLastUpdate;
+  if (elapsed >= 1000) {
+    const fps = Math.round((fpsFrameCount * 1000) / elapsed);
+    fpsEl.textContent = `\u5e27\u7387 ${fps}`;
+    fpsEl.classList.toggle("fps-low", fps < 45);
+    fpsEl.classList.toggle("fps-bad", fps < 30);
+    fpsFrameCount = 0;
+    fpsLastUpdate = now;
+  }
+  requestAnimationFrame(fpsLoop);
+}
+requestAnimationFrame(fpsLoop);
