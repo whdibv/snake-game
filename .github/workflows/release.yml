@@ -3,11 +3,19 @@ name: Release
 on:
   push:
     tags:
-      - "v1.0.0"
+      - "v*"
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Release tag/version, e.g. v1.1.0"
+        required: false
+        default: ""
 
 permissions:
   contents: write
+
+env:
+  TAG_NAME: ${{ github.event.inputs.version || github.ref_name }}
 
 jobs:
   windows:
@@ -32,8 +40,8 @@ jobs:
       - name: Upload EXE to release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.0
-          name: v1.0.0
+          tag_name: ${{ env.TAG_NAME }}
+          name: ${{ env.TAG_NAME }}
           files: dist/windows/*.exe
 
   android:
@@ -72,11 +80,11 @@ jobs:
         run: ./gradlew assembleDebug
 
       - name: Rename APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk snake-game-v1.0.0-android-debug.apk
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk snake-game-${{ env.TAG_NAME }}-android-debug.apk
 
       - name: Upload APK to release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.0
-          name: v1.0.0
-          files: snake-game-v1.0.0-android-debug.apk
+          tag_name: ${{ env.TAG_NAME }}
+          name: ${{ env.TAG_NAME }}
+          files: snake-game-${{ env.TAG_NAME }}-android-debug.apk
