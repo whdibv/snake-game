@@ -2,7 +2,10 @@
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
     <title>&#36138;&#21507;&#34503;</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -28,11 +31,19 @@
 
         <div class="board-wrap">
           <canvas id="gameCanvas" width="600" height="600" aria-label="&#28216;&#25103;&#26827;&#30424;"></canvas>
+          <div class="touch-layer" id="touchLayer" aria-hidden="true">
+            <span class="hint-arrow hint-up">&#9650;</span>
+            <span class="hint-arrow hint-down">&#9660;</span>
+            <span class="hint-arrow hint-left">&#9664;</span>
+            <span class="hint-arrow hint-right">&#9654;</span>
+          </div>
           <div class="overlay" id="overlay">
             <p id="overlayTitle">&#20934;&#22791;&#24320;&#22987;</p>
             <span id="overlayHint">&#25353;&#31354;&#26684;&#25110;&#28857;&#20987;&#24320;&#22987;</span>
           </div>
         </div>
+
+        <p class="touch-hint" id="touchHint"></p>
 
         <footer class="controls">
           <div class="actions" aria-label="&#28216;&#25103;&#25805;&#20316;">
@@ -56,6 +67,7 @@
         <div class="status-strip">
           <span id="gameStatus">&#24453;&#26426;</span>
           <span id="foodCount">&#39135;&#29289; 0</span>
+          <span id="fpsCount">&#24127;&#29575; --</span>
         </div>
 
         <div class="pad" aria-label="&#31227;&#21160;&#25511;&#21046;">
@@ -68,7 +80,7 @@
         <dl class="legend">
           <div>
             <dt>&#31227;&#21160;</dt>
-            <dd>&#26041;&#21521;&#38190; / WASD</dd>
+            <dd>&#26041;&#21521;&#38190; / WASD / &#28857;&#26797;&#30424;&#22235;&#36793;</dd>
           </div>
           <div>
             <dt>&#26242;&#20572;</dt>
