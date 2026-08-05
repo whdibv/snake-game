@@ -2,6 +2,10 @@
 
 一个纯前端贪吃蛇小游戏，支持键盘、鼠标与移动端触控。
 
+## 在线演示
+
+🎮 [snake.wldwz.icu](https://snake.wldwz.icu)
+
 ## 功能特性
 
 - 键盘（方向键 / WASD）或鼠标点击棋盘四边控制转向
@@ -38,6 +42,10 @@ python -m http.server 4173 --bind 127.0.0.1
 
 キーボードとモバイル用ボタンで操作できる、フロントエンドのスネークゲームです。
 
+### オンラインデモ
+
+🎮 [snake.wldwz.icu](https://snake.wldwz.icu)
+
 ### 操作
 
 - 矢印キーまたは WASD で移動
@@ -63,6 +71,10 @@ python -m http.server 4173 --bind 127.0.0.1
 ## English <sub>[中文](#readme) | [日本語](#japanese)</sub>
 
 A pure frontend snake game with keyboard, mouse and touch controls.
+
+### Online Demo
+
+🎮 [snake.wldwz.icu](https://snake.wldwz.icu)
 
 ### Controls
 
